@@ -1,9 +1,14 @@
+import ast
+import re
 from setuptools import setup, find_packages
 
 with open("requirements.txt") as f:
     install_requires = [r for r in f.read().strip().split("\n") if r]
 
-from print_formats import __version__ as version
+_version_re = re.compile(r"__version__\s+=\s+(.*)")
+
+with open("print_formats/__init__.py", "rb") as f:
+    version = str(ast.literal_eval(_version_re.search(f.read().decode("utf-8")).group(1)))
 
 setup(
     name="print_formats",
