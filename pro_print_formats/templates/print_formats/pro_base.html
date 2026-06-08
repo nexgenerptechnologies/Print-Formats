@@ -1,0 +1,63 @@
+{% macro render_pro_format(doc, title) %}
+{% set copies = ['ORIGINAL COPY', 'DUPLICATE COPY', 'TRIPLICATE COPY'] %}
+{% for copy_type in copies %}
+<div class="pro-print-format {% if not loop.last %}page-break{% endif %}" style="{% if not loop.last %}page-break-after: always;{% endif %} font-family: 'Inter', 'Roboto', sans-serif; font-size: 10pt; line-height: 1.4; color: #333; background-color: #fff;">
+    
+    <!-- HEADER -->
+    <div class="header" style="padding-bottom: 10px; border-bottom: 2px solid #ddd; margin-bottom: 20px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 60%; vertical-align: top;">
+                    {% if doc.company %}
+                        {% set company = frappe.get_doc("Company", doc.company) %}
+                        {% if company.company_logo %}
+                            <img src="{{ company.company_logo }}" style="max-height: 50px; margin-bottom: 10px;">
+                        {% endif %}
+                        <h2 style="margin: 0; font-size: 14pt; color: #111;">{{ company.company_name }}</h2>
+                        <div style="font-size: 9pt; color: #555;">
+                            {{ frappe.db.get_value("Address", company.default_address, "address_line1") or "" }}<br>
+                            {{ frappe.db.get_value("Address", company.default_address, "city") or "" }} - {{ frappe.db.get_value("Address", company.default_address, "pincode") or "" }}
+                        </div>
+                        <div style="font-size: 9pt; margin-top: 5px; font-weight: bold;">
+                            GSTIN: {{ company.tax_id or "" }}
+                        </div>
+                    {% endif %}
+                </td>
+                <td style="width: 40%; text-align: right; vertical-align: top;">
+                    <div style="font-size: 10pt; font-weight: bold; color: #555; text-transform: uppercase;">{{ copy_type }}</div>
+                    <h1 style="margin: 10px 0 5px 0; font-size: 18pt; color: #111; text-transform: uppercase;">{{ title }}</h1>
+                    <div style="font-size: 10pt;">
+                        <strong>No:</strong> {{ doc.name }}<br>
+                        <strong>Date:</strong> {{ doc.get_formatted("posting_date") or doc.get_formatted("transaction_date") }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- MAIN CONTENT INJECTED HERE -->
+    {{ caller() }}
+
+    <!-- FOOTER -->
+    <div id="footer-html" class="visible-pdf" style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px;">
+        <table style="width: 100%; font-size: 8pt; color: #666;">
+            <tr>
+                <td style="width: 33%; text-align: left;">
+                    {% if doc.doctype == "Sales Invoice" and doc.irn %}
+                        <div><strong>IRN:</strong> {{ doc.irn }}</div>
+                        <div><strong>Ack No:</strong> {{ doc.ack_no }} | <strong>Ack Date:</strong> {{ doc.ack_date }}</div>
+                    {% endif %}
+                </td>
+                <td style="width: 33%; text-align: center;">
+                    <span class="page">Page <span class="page-number"></span> of <span class="page-count"></span></span>
+                </td>
+                <td style="width: 33%; text-align: right;">
+                    <strong>For {{ doc.company }}</strong><br><br><br>
+                    Authorized Signatory
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endfor %}
+{% endmacro %}

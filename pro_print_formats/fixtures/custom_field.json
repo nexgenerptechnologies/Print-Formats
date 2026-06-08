@@ -1,0 +1,24 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Stock Entry",
+  "fieldname": "tax_category",
+  "fieldtype": "Link",
+  "insert_after": "company",
+  "label": "Tax Category",
+  "options": "Tax Category",
+  "name": "Stock Entry-tax_category"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Stock Entry",
+  "fieldname": "taxes_and_charges",
+  "fieldtype": "Table",
+  "insert_after": "tax_category",
+  "label": "Taxes and Charges",
+  "options": "Stock Taxes and Charges",
+  "name": "Stock Entry-taxes_and_charges"
+ }
+]
